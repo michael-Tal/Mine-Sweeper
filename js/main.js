@@ -39,8 +39,8 @@ function buildBoard() {
                 isMine: false,
                 isMarked: false
             }
-            if (i === getRandomInt(0,SIZE) && j === getRandomInt(0,SIZE) ||
-                i === getRandomInt(0,SIZE) && j === getRandomInt(0,SIZE)) {
+            if (i === 1 && j === 3 ||
+                i === 1 && j === 1) {
                 cell.isMine = true;
             }
             board[i][j] = (cell);
@@ -116,6 +116,8 @@ function revealNegsZero(mat, rowIdx, colIdx) {
 
 function gameOver() {
     clearInterval(gTimeInterval);
+    var elTime = document.querySelector('.rst');
+    elTime.innerText = '😭';
     gBoard = null
     gGame.isOn = false
     gNumOfMinsAround;
@@ -125,6 +127,8 @@ function restartGame() {
     gTimeInterval = 0;
     var elTime = document.querySelector('.clock');
     elTime.innerText = 0;
+    var elTime = document.querySelector('.rst');
+    elTime.innerText = '😃';
     init()
 }
 
@@ -161,6 +165,8 @@ function checkGameOver(board) {
 
 function gameDone() {
     clearInterval(gTimeInterval);
+    var elTime = document.querySelector('.rst');
+    elTime.innerText = '😍';
     gGame.isOn = false;
     gBoard = null;
 }
