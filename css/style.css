@@ -1,21 +1,46 @@
 body {
+    text-align: center;
     background-color: white;
-    color:black}
+    color:black
+}
+.header{
+    padding: 20px;
+    background-color: royalblue;
+    color: red;
+    font-family: italic;
+    margin: 50px;
+}
 
 .modal{
-    display: none;
+    display: block;
     text-align: center;
     background-color: aquamarine;
     color: black;
 }
 
-.over {
-    display: none;
+.board{
+    background-color: blueviolet;
+    border:1px solid black;
+    text-align: center;
+    display: block;
+    margin: auto;
+    height: 220px;
+    width: 220px;
+}
+.clock{
+    display: inline;
+}
+.mines{
+    display: inline;
 }
 
-.done {
-    display: none;
+
+.game{
+    display: block;
+    text-align: center;
+    margin-inline: 10px;
 }
+
 
 .cell {
     border: 2px solid black;
@@ -28,10 +53,5 @@ body {
     padding: 3px solid teal;
     border:2px solid teal;
     color: blue;
-}
-img{
-    text-align: center;
-    height: 30px;
-    width: 30px;
 }
 /* .cell img {width:25px; height:auto} */

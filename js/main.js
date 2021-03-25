@@ -1,6 +1,6 @@
 // 'use-strict'
-const MINES = '<img src="pic/mine.jpeg"></img>'
-const FLAG = '<img src="pic/flag.png"></img>'
+const MINES = '💥'
+const FLAG = '🚩'
 
 var gBoard = null
 var gLevel = {
@@ -14,10 +14,17 @@ var gGame = {
     secsPassed: 0
 }
 
+var gMinesLeft;
 var gNumOfMinsAround;
+var gTimeInterval;
+var startTime;
+
 function init() {
+    gMinesLeft = gLevel.mines;
     gBoard = buildBoard()
+    setMinesNegsCount(gBoard);
     printMat(gBoard, '.game');
+    gTimeInterval;
 }
 
 function buildBoard() {
@@ -32,41 +39,51 @@ function buildBoard() {
                 isMine: false,
                 isMarked: false
             }
-            if (i === 1 && j === 3 ||
-                i === 1 && j === 1) {
+            if (i === getRandomInt(0,SIZE) && j === getRandomInt(0,SIZE) ||
+                i === getRandomInt(0,SIZE) && j === getRandomInt(0,SIZE)) {
                 cell.isMine = true;
-                // var currCell = {i:i,j:j};
             }
             board[i][j] = (cell);
         }
     }
-    console.log(board);
     return board;
 }
 
 function cellClicked(elBtn, i, j) {
-    if (event.button == 2){
-
-    } 
+    if(!gGame.isOn){
+        startTime = new Date().getTime();
+        gTimeInterval =  setInterval(clockRunning,1)
+    }
     if (!gGame.isOn) gGame.isOn = true
-    gNumOfMinsAround = setMinesNegsCount(gBoard, i, j);
-    // revealNegsZero(elBtn, gBoard, i, j);
     var cell = gBoard[i][j];
+    if (cell.isShown) return
     if (cell.isMine) {
+        elBtn.innerText = MINES;
         gameOver();
         return;
     }
+    gNumOfMinsAround = cell.minesAroundCount;
+    if (cell.minesAroundCount === 0) revealNegsZero(gBoard, i, j);
     //update The Model
-    cell.minesAroundCount = gNumOfMinsAround;
     cell.isShown = true;
     if (gBoard.isMine) return;
     //update The DOM
     elBtn.innerText = gNumOfMinsAround;
+
+    checkGameOver(gBoard);
 }
 
-//Count mines around each cell and set the cell's minesAroundCount
-// function setMinesNegsCount(board) {
-function setMinesNegsCount(mat, rowIdx, colIdx) {
+function setMinesNegsCount(mat) {
+    for (var i = 0; i < mat.length; i++) {
+        for (var j = 0; j < mat[0].length; j++) {
+            var cell = mat[i][j]
+            if (cell.isMine) continue;
+            cell.minesAroundCount = setMinesNegsCountInBoard(mat, i, j)
+        }
+    }
+}
+
+function setMinesNegsCountInBoard(mat, rowIdx, colIdx) {
     var minesAroundCount = 0;
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         if (i < 0 || i > mat.length - 1) continue
@@ -80,61 +97,77 @@ function setMinesNegsCount(mat, rowIdx, colIdx) {
     return minesAroundCount
 }
 
-function revealNegsZero(elBtn, mat, rowIdx, colIdx) {
-    var res = [];
-    // var minesAroundCount = 0;
+function revealNegsZero(mat, rowIdx, colIdx) {
     for (var i = rowIdx - 1; i <= rowIdx + 1; i++) {
         if (i < 0 || i > mat.length - 1) continue
         for (var j = colIdx - 1; j <= colIdx + 1; j++) {
             if (j < 0 || j > mat[0].length - 1) continue
-            if (i === rowIdx && j === colIdx) continue
+            var currCell = mat[i][j];
+            var cell = { i: i, j: j };
+            currCell.isShown = true;
+            renderCell(cell, currCell.minesAroundCount);
+            // ********complete recorshion.************
 
-            // var cell = mat[i][j];
-            if (!mat[rowIdx][colIdx].isMine || mat[rowIdx][colIdx].minesAroundCount === 0) cellClicked(elBtn, i, j);
-            // if (cell.isMine) minesAroundCount++
+            // gNumOfMinsAround--
+            // if (currCell.minesAroundCount === 0 &&gNumOfMinsAround!==-1) revealNegsZero(gBoard, cell.i, cell.j);
         }
     }
-    // return minesAroundCount
 }
 
 function gameOver() {
-    console.log('Game Over');
+    clearInterval(gTimeInterval);
     gBoard = null
     gGame.isOn = false
     gNumOfMinsAround;
-    var elModal = document.querySelector('.modal')
-    elModal.style.display = 'block'
-    var elTextGameOver = document.querySelector('.over')
-    elTextGameOver.style.display = 'block'
 }
 
 function restartGame() {
-    var elModal = document.querySelector('.modal')
-    elModal.style.display = 'none'
-    var elTextGameOver = document.querySelector('.over')
-    elTextGameOver.style.display = 'none'
-    var elTextGameDone = document.querySelector('.done')
-    elTextGameDone.style.display = 'none'
-    // gBoard;
-    // gGame = {
-    //     score: 0,
-    //     isOn: false
-    // }
+    gTimeInterval = 0;
+    var elTime = document.querySelector('.clock');
+    elTime.innerText = 0;
     init()
 }
-// function gameOver() {
-//     gGame.isOn = false;  
-//     // clearInterval(gIntervalCherry);
-//     // clearInterval(gIntervalGhosts);
-//     gIntervalGhosts = null
 
-//     // TODO
-// }
+function cellMarked(elBtn, i, j) {
+    elBtn.addEventListener('contextmenu', e =>
+        e.preventDefault());
+    elBtn.innerText = FLAG;
+    gGame.markedCount++
+    var cell = gBoard[i][j];
+    cell.isMarked = true;
+    if (gMinesLeft>0){
+        gMinesLeft--
+        var elCount = document.querySelector('.mines');
+        elCount.innerText = gMinesLeft;
 
-function onButtonClick(event) {
-    if (event.button == 2){
-
-    }  
+    }
+    checkGameOver(gBoard)
 }
 
+function checkGameOver(board) {
+    var countShowenCells = 0;
+    var numOfMarked = 0
+    for (var i = 0; i < board.length; i++) {
+        for (var j = 0; j < board[0].length; j++) {
+            var cell = board[i][j];
+            if (cell.isShown && !cell.isMine) countShowenCells++;
+            if (cell.isMine && cell.isMarked) numOfMarked++
+        }
+    }
+    var numOfCellsThatShown = gLevel.size ** 2 - gLevel.mines;
+    if (countShowenCells === numOfCellsThatShown
+        && numOfMarked === gLevel.mines) gameDone()
+}
 
+function gameDone() {
+    clearInterval(gTimeInterval);
+    gGame.isOn = false;
+    gBoard = null;
+}
+
+function clockRunning() {
+    var countTime = new Date().getTime();
+    var diff = countTime - startTime
+    var elTime = document.querySelector('.clock');
+    elTime.innerText = diff;
+}
