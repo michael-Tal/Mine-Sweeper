@@ -18,15 +18,19 @@ body {
     color: black;
 }
 
-.board{
+.rst{
+    background-color: aquamarine;
+}
+
+/* .board{
     background-color: blueviolet;
     border:1px solid black;
     text-align: center;
     display: block;
     margin: auto;
-    height: 220px;
-    width: 220px;
-}
+    height: 480px;
+    width: 480px;
+} */
 .clock{
     display: inline;
 }
@@ -35,19 +39,24 @@ body {
 }
 
 
-.game{
+/* .game{
     display: block;
     text-align: center;
     margin-inline: 10px;
-}
+} */
 
-
+/* table{
+    height: 480px;
+    width: 480;
+} */
 .cell {
+    background-color: gray;
     border: 2px solid black;
-    width:40px;
     height:40px;
+    width:40px;
     text-align: center;
     cursor: pointer;
+    margin: none;
 }
 .cell:hover{
     padding: 3px solid teal;
