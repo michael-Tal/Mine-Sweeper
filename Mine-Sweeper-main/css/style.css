@@ -1,0 +1,58 @@
+body {
+    text-align: center;
+    background-color: white;
+    color:black
+}
+.header{
+    padding: 20px;
+    background-color: royalblue;
+    color: red;
+    font-family: italic;
+    margin: 50px;
+}
+
+.modal{
+    display: block;
+    text-align: center;
+    background-color: aquamarine;
+    color: black;
+}
+
+.rst{
+    background-color: aquamarine;
+    padding-inline: 20px;
+    margin-inline: 30px;
+    cursor: pointer;
+}
+
+.clock,.mines{
+    display: inline-block;
+    height: auto;
+    width: 50px;
+}
+/* .mines{
+    display: inline;
+} */
+
+
+.game{
+    margin: auto;
+    padding: 10px;
+}
+table{
+    margin: auto;
+}
+.cell {
+    background-color: gray;
+    border: 2px solid black;
+    height:40px;
+    width:40px;
+    text-align: center;
+    cursor: pointer;
+    margin: none;
+}
+.cell:hover{
+    padding: 3px solid teal;
+    border:2px solid teal;
+    color: blue;
+}
